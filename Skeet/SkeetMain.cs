@@ -113,14 +113,17 @@ namespace Skeet
 
             screen.test = screen.test + 100;
 
+            //viewz = 0;
+            
+
             viewz = viewz + 1;
-            if (viewz > 100)
+            if (viewz > 360)
             {
-                viewz = -100;
+                viewz = 0;
             }
 
             screen.View = Matrix.CreateLookAt(
-                new Vector3(0, 0, viewz),
+                new Vector3(0, (float)Math.Sin(MathHelper.ToRadians(viewz))*100, 40),
                 Vector3.Zero,
                 Vector3.Up);
 
