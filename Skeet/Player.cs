@@ -96,7 +96,7 @@ namespace Skeet
             
             if (_dbg_newz < -0.2f)
             {
-                _dbg_newz = 0.2f;
+                _dbg_newz = 0.0f;
             }
             
             _dbg_scale = _dbg_scale + 0.025f;
@@ -108,7 +108,7 @@ namespace Skeet
             // ignore above, reset back to normal values
             _dbg_newx = 0;
             _dbg_newy = 0;
-            _dbg_newz = -0.001f;
+            //_dbg_newz = -0.001f;
             _dbg_scale = 1.0f;
 
             _animation_sprite.test_translation = new Vector3(_dbg_newx, _dbg_newy, _dbg_newz);
