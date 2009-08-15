@@ -34,6 +34,7 @@ namespace Skeet
 
         int updatecount = 0;
         int viewz = 0;
+        Vector3 camera_position;
 
         public SkeetGame()
         {
@@ -57,8 +58,8 @@ namespace Skeet
             screen.Projection = Matrix.CreatePerspectiveFieldOfView(
                 MathHelper.ToRadians(45.0f),
                 screen.graphics.GraphicsDevice.Viewport.AspectRatio,
-                1.0f,
-                10000.0f);
+                0.001f,
+                1.0f);
                 /*Matrix.CreatePerspectiveFieldOfView(
                 MathHelper.PiOver4,
                 screen.graphics.GraphicsDevice.Viewport.AspectRatio,
@@ -117,13 +118,16 @@ namespace Skeet
             
 
             viewz = viewz + 1;
+            viewz = 0;
             if (viewz > 360)
             {
                 viewz = 0;
             }
 
+            camera_position = new Vector3(0, (float)Math.Sin(MathHelper.ToRadians(viewz)) * 0.1f, 0.040f);
+
             screen.View = Matrix.CreateLookAt(
-                new Vector3(0, (float)Math.Sin(MathHelper.ToRadians(viewz))*100, 40),
+                camera_position,
                 Vector3.Zero,
                 Vector3.Up);
 
@@ -151,6 +155,9 @@ namespace Skeet
             strlist.Add("");
             strlist.Add("updatecount = " + updatecount);
             strlist.Add("viewz = " + viewz);
+            strlist.Add("cameraposition.x,y,z = " + camera_position.X + ", " + camera_position.Y + ", " + camera_position.Z);
+            strlist.Add("player._dbg_newx,y,z = " + player._dbg_newx + ", " + player._dbg_newy + ", " + player._dbg_newz);
+            strlist.Add("player._dbg_scale = " + player._dbg_scale);
 
             updatecount = 0;
             int i = 0;

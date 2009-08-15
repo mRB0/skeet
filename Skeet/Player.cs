@@ -55,6 +55,9 @@ namespace Skeet
         Vector2 _sprite_loc;
         ScreenBits _screen;
 
+        public float _dbg_newx = 0f, _dbg_newy = 0f, _dbg_newz = 0f;
+        public float _dbg_scale = 1.0f;
+
         public Player(ScreenBits screen, String who)
         {
             _screen = screen;
@@ -77,6 +80,39 @@ namespace Skeet
             {
                 _sprite_idx = (_sprite_idx + 1) % _sprite_animcount;
             }
+
+            _dbg_newx = _dbg_newx + 0.001f;
+            _dbg_newy = _dbg_newy + 0.001f;
+            if (_dbg_newx > 0.016f)
+            {
+                _dbg_newx = -0.016f;
+            }
+            if (_dbg_newy > 0.016f)
+            {
+                _dbg_newy = -0.016f;
+            }
+
+            _dbg_newz = _dbg_newz - 0.00125f;
+            
+            if (_dbg_newz < -0.2f)
+            {
+                _dbg_newz = 0.2f;
+            }
+            
+            _dbg_scale = _dbg_scale + 0.025f;
+            if (_dbg_scale > 3.0f)
+            {
+                _dbg_scale = 0.25f;
+            }
+
+            // ignore above, reset back to normal values
+            _dbg_newx = 0;
+            _dbg_newy = 0;
+            _dbg_newz = -0.001f;
+            _dbg_scale = 1.0f;
+
+            _animation_sprite.test_translation = new Vector3(_dbg_newx, _dbg_newy, _dbg_newz);
+            _animation_sprite.test_scale = _dbg_scale;
         }
 
         public void Draw(GameTime gameTime)
