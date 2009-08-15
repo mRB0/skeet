@@ -55,7 +55,7 @@ namespace Skeet
              */
             _quadEffect.TextureEnabled = true;
             _quadEffect.Texture = this._texture;
-
+            
             _quadVertexDecl = new VertexDeclaration(
                 _screen.graphics.GraphicsDevice,
                 VertexPositionNormalTexture.VertexElements
