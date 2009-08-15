@@ -16,6 +16,9 @@ namespace Skeet
 {
     class Sprite
     {
+        public Vector3 test_translation = Vector3.Zero;
+        public float test_scale = 1.0f;
+
         Quad _quad;
         public Texture2D texture
         {
@@ -39,15 +42,17 @@ namespace Skeet
         public Sprite(ScreenBits screen, Texture2D texture)
         {
             _screen = screen;
-            _quad = new Quad(new Vector3(0, 0, 0), Vector3.Backward, Vector3.Up, texture.Width, texture.Height);
+            _quad = new Quad(new Vector3(0, 0, 0), Vector3.Backward, Vector3.Up, (float)texture.Width / 1000f, (float)texture.Height / 1000f);
             this._texture = texture;
 
             _quadEffect = new BasicEffect(screen.graphics.GraphicsDevice, null);
             _quadEffect.EnableDefaultLighting();
 
+            /*
             _quadEffect.World = Matrix.Identity;
             _quadEffect.View = screen.View;
             _quadEffect.Projection = screen.Projection;
+             */
             _quadEffect.TextureEnabled = true;
             _quadEffect.Texture = this._texture;
 
@@ -60,6 +65,15 @@ namespace Skeet
         public void Draw(GameTime gameTime)
         {
             _screen.graphics.GraphicsDevice.VertexDeclaration = _quadVertexDecl;
+
+            _quadEffect.World = Matrix.CreateFromYawPitchRoll(
+                        Vector3.Zero.Y,
+                        Vector3.Zero.X,
+                        Vector3.Zero.Z) *
+
+                        Matrix.CreateScale(test_scale) *
+
+                        Matrix.CreateTranslation(test_translation);
 
             _quadEffect.View = _screen.View;
             _quadEffect.Projection = _screen.Projection;
