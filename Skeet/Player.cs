@@ -54,6 +54,7 @@ namespace Skeet
         int _sprite_animwait;
         Vector2 _sprite_loc;
         ScreenBits _screen;
+        String _whoami;
 
         public float _dbg_newx = 0f, _dbg_newy = 0f, _dbg_newz = 0f;
         public float _dbg_scale = 1.0f;
@@ -66,10 +67,17 @@ namespace Skeet
             _sprite_loc.X = 10f;
             _sprite_loc.Y = 80f;
 
-            _animation = _screen.content.Load<Texture2D>("Sprites/" + who + "/move");
-            _animation_sprite = new Sprite(_screen, _animation);
+            this._whoami = who;
         }
-        
+
+        protected override void LoadContent()
+        {
+            _animation = _screen.content.Load<Texture2D>("Sprites/" + _whoami + "/move");
+            _animation_sprite = new Sprite(_screen, _animation);
+
+            base.LoadContent();
+        }
+
         public override void Update(GameTime gameTime)
         {
             _sprite_loc.X = _sprite_loc.X + 1;

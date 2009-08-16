@@ -66,6 +66,8 @@ namespace Skeet
                 1,
                 500);*/
 
+            player = new Player(this, this.screen, "Celes");
+            Components.Add(player);
             
             base.Initialize();
         }
@@ -81,11 +83,6 @@ namespace Skeet
             
             // TODO: use this.Content to load your game content here
             my_font = this.Content.Load<SpriteFont>("SpriteFont1");
-
-            
-            player = new Player(this, this.screen, "Celes");
-
-            Components.Add(player);
         }
 
         /// <summary>
