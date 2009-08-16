@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Skeet
 {
-    class Player
+    public class Player : DrawableGameComponent
     {
         /*
          * CONSTANTS
@@ -58,7 +58,7 @@ namespace Skeet
         public float _dbg_newx = 0f, _dbg_newy = 0f, _dbg_newz = 0f;
         public float _dbg_scale = 1.0f;
 
-        public Player(ScreenBits screen, String who)
+        public Player(Game game, ScreenBits screen, String who) : base(game)
         {
             _screen = screen;
             _sprite_idx = 0;
@@ -70,7 +70,7 @@ namespace Skeet
             _animation_sprite = new Sprite(_screen, _animation);
         }
         
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             _sprite_loc.X = _sprite_loc.X + 1;
 
@@ -113,12 +113,16 @@ namespace Skeet
 
             _animation_sprite.test_translation = new Vector3(_dbg_newx, _dbg_newy, _dbg_newz);
             _animation_sprite.test_scale = _dbg_scale;
+
+            base.Update(gameTime);
         }
 
-        public void Draw(GameTime gameTime)
+        public override void Draw(GameTime gameTime)
         {
             _animation_sprite.texture = _animation;
             _animation_sprite.Draw(gameTime);
+
+            base.Draw(gameTime);
         }
 
     }

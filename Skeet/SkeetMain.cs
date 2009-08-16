@@ -83,8 +83,9 @@ namespace Skeet
             my_font = this.Content.Load<SpriteFont>("SpriteFont1");
 
             
-            player = new Player(this.screen, "Celes");
+            player = new Player(this, this.screen, "Celes");
 
+            Components.Add(player);
         }
 
         /// <summary>
@@ -107,7 +108,7 @@ namespace Skeet
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            player.Update(gameTime);
+            //player.Update(gameTime);
 
             // TODO: Add your update logic here
             updatecount++;
@@ -173,7 +174,7 @@ namespace Skeet
 
             screen.spriteBatch.End();
 
-            player.Draw(gameTime);
+            //player.Draw(gameTime);
 
             base.Draw(gameTime);
         }
