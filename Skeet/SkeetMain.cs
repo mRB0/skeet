@@ -39,6 +39,7 @@ namespace Skeet
         public SkeetGame()
         {
             screen.graphics = new GraphicsDeviceManager(this);
+
             screen.content = Content;
             Content.RootDirectory = "Content";
         }
@@ -51,6 +52,9 @@ namespace Skeet
         /// </summary>
         protected override void Initialize()
         {
+            screen.graphics.MinimumVertexShaderProfile = ShaderProfile.VS_2_SW;
+            screen.graphics.ApplyChanges();
+
             screen.View = Matrix.CreateLookAt(
                 new Vector3(0, -110, 54),
                 Vector3.Zero,
@@ -105,12 +109,16 @@ namespace Skeet
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
+                this.Exit();
+            }
             //player.Update(gameTime);
 
-            // TODO: Add your update logic here
+            /*
+             * Update logic.
+             */
             updatecount++;
-
-            screen.test = screen.test + 100;
 
             //viewz = 0;
             
@@ -146,6 +154,7 @@ namespace Skeet
             // TODO: Add your drawing code here
             List<string> strlist = new List<string>();
 
+            strlist.Add(screen.graphics.GraphicsDevice.Viewport.Width + "x" + screen.graphics.GraphicsDevice.Viewport.Height);
             strlist.Add("GameTime.ElapsedGameTime = " + gameTime.ElapsedGameTime);
             strlist.Add("GameTime.ElapsedRealTime = " + gameTime.ElapsedRealTime);
             strlist.Add("GameTime.TotalGameTime = " + gameTime.TotalGameTime);
@@ -155,6 +164,7 @@ namespace Skeet
             strlist.Add("viewz = " + viewz);
             strlist.Add("cameraposition.x,y,z = " + camera_position.X + ", " + camera_position.Y + ", " + camera_position.Z);
             strlist.Add("player._dbg_newx,y,z = " + player._dbg_newx + ", " + player._dbg_newy + ", " + player._dbg_newz);
+            strlist.Add("player._dbg_rotx,y,z = " + player._dbg_rotx + ", " + player._dbg_roty + ", " + player._dbg_rotz);
             strlist.Add("player._dbg_scale = " + player._dbg_scale);
 
             updatecount = 0;
@@ -168,9 +178,9 @@ namespace Skeet
             }
 
             //screen.spriteBatch.Draw(player.drawsprite, player.drawloc, player.drawrect, Color.White);
-
+            screen.spriteBatch.Draw(player.drawsprite, player.drawloc, new Rectangle(0, 0, 60, 60), Color.White);
             screen.spriteBatch.End();
-
+           
             //player.Draw(gameTime);
 
             base.Draw(gameTime);
