@@ -103,7 +103,7 @@ namespace Skeet
             
             if (_dbg_newz < -0.2f)
             {
-                _dbg_newz = 0.0f;
+                _dbg_newz = 0.04f;
             }
             
             _dbg_scale = _dbg_scale + 0.025f;
@@ -122,7 +122,7 @@ namespace Skeet
             // ignore above, reset back to normal values
             _dbg_newx = 0;
             _dbg_newy = 0;
-            //_dbg_newz = -0.001f;
+            _dbg_newz = 0.025f;
             //_dbg_rotx = 0f;
             _dbg_roty = 0f;
             _dbg_rotz = 0f;

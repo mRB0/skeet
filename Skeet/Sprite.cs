@@ -29,8 +29,8 @@ namespace Skeet
             }
             set
             {
-                //_texture = value;
-                //_quadEffect.Texture = _texture;
+                _texture = value;
+                _quadEffect.Texture = _texture;
             }
         }
 
