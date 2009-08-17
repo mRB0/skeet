@@ -17,6 +17,7 @@ namespace Skeet
     class Sprite
     {
         public Vector3 test_translation = Vector3.Zero;
+        public Vector3 test_rotation = Vector3.Zero;
         public float test_scale = 1.0f;
 
         Quad _quad;
@@ -28,13 +29,13 @@ namespace Skeet
             }
             set
             {
-                _texture = value;
-                _quadEffect.Texture = _texture;
+                //_texture = value;
+                //_quadEffect.Texture = _texture;
             }
         }
 
         Texture2D _texture;
-
+        
         BasicEffect _quadEffect;
         ScreenBits _screen;
         VertexDeclaration _quadVertexDecl;
@@ -43,8 +44,10 @@ namespace Skeet
         {
             _screen = screen;
             _quad = new Quad(new Vector3(0, 0, 0), Vector3.Backward, Vector3.Up, (float)texture.Width / 1000f, (float)texture.Height / 1000f);
-            this._texture = texture;
+            //_quad = new Quad(new Vector3(0, 0, 0), Vector3.Backward, Vector3.Up, (float)texture.Width / 1000f, (float)texture.Width / 1000f);
 
+            this._texture = texture;
+            
             _quadEffect = new BasicEffect(screen.graphics.GraphicsDevice, null);
             _quadEffect.EnableDefaultLighting();
 
@@ -62,14 +65,19 @@ namespace Skeet
                 );
         }
 
+        public void Update(GameTime gameTime)
+        {
+
+        }
+
         public void Draw(GameTime gameTime)
         {
             _screen.graphics.GraphicsDevice.VertexDeclaration = _quadVertexDecl;
 
             _quadEffect.World = Matrix.CreateFromYawPitchRoll(
-                        Vector3.Zero.Y,
-                        Vector3.Zero.X,
-                        Vector3.Zero.Z) *
+                        test_rotation.Y,
+                        test_rotation.X,
+                        test_rotation.Z) *
 
                         Matrix.CreateScale(test_scale) *
 
@@ -78,7 +86,6 @@ namespace Skeet
             _quadEffect.View = _screen.View;
             _quadEffect.Projection = _screen.Projection;
 
-            _screen.test = _screen.test + 1;
 
             _quadEffect.Begin();
             foreach (EffectPass pass in _quadEffect.CurrentTechnique.Passes)
