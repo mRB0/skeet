@@ -53,6 +53,7 @@ namespace Skeet
         protected override void Initialize()
         {
             screen.graphics.MinimumVertexShaderProfile = ShaderProfile.VS_2_SW;
+            
             screen.graphics.ApplyChanges();
 
             screen.View = Matrix.CreateLookAt(
@@ -74,6 +75,7 @@ namespace Skeet
             Components.Add(player);
             
             base.Initialize();
+
         }
 
         /// <summary>
