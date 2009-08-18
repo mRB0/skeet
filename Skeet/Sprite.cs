@@ -63,6 +63,7 @@ namespace Skeet
                 _screen.graphics.GraphicsDevice,
                 VertexPositionNormalTexture.VertexElements
                 );
+            
         }
 
         public void Update(GameTime gameTime)

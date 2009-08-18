@@ -23,6 +23,7 @@ namespace Skeet
         public int test;
     };
 
+    
     /// <summary>
     /// This is the main type for your game
     /// </summary>
@@ -36,6 +37,8 @@ namespace Skeet
         int viewz = 0;
         Vector3 camera_position;
 
+        public Model planemodel;
+        
         public SkeetGame()
         {
             screen.graphics = new GraphicsDeviceManager(this);
@@ -89,6 +92,9 @@ namespace Skeet
             
             // TODO: use this.Content to load your game content here
             my_font = this.Content.Load<SpriteFont>("SpriteFont1");
+
+            planemodel = this.Content.Load<Model>("Models/flatsquare");
+            
         }
 
         /// <summary>
@@ -142,6 +148,7 @@ namespace Skeet
             base.Update(gameTime);
         }
 
+        float roll = 1.0f;
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -150,6 +157,8 @@ namespace Skeet
         {
             
             GraphicsDevice.Clear(new Color(0.08f, 0.08f, 0.08f));
+
+            base.Draw(gameTime);
 
             screen.spriteBatch.Begin();
 
@@ -180,12 +189,45 @@ namespace Skeet
             }
 
             //screen.spriteBatch.Draw(player.drawsprite, player.drawloc, player.drawrect, Color.White);
-            screen.spriteBatch.Draw(player.drawsprite, player.drawloc, new Rectangle(0, 0, 60, 60), Color.White);
+            screen.spriteBatch.Draw(player.drawsprite, player.drawloc, new Rectangle(0, 0, 64, 64), Color.White);
+
             screen.spriteBatch.End();
            
             //player.Draw(gameTime);
+            roll = roll + 1.5f;
+            if (roll > 360f)
+            {
+                roll = 0f;
+            }
+            
 
-            base.Draw(gameTime);
+            // draw object
+            foreach (ModelMesh mesh in planemodel.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    //effect.TextureEnabled = true;
+                    effect.Texture = player.drawsprite;
+                    effect.EnableDefaultLighting();
+                    effect.PreferPerPixelLighting = true;
+
+                    effect.World =
+                        Matrix.CreateFromYawPitchRoll(
+                            0.0f,
+                            (float)Math.Sin(MathHelper.ToRadians(roll)) * 1f,
+                            0.0f) *
+
+                        Matrix.CreateScale(0.0016f) *
+
+                        Matrix.CreateTranslation(Vector3.Zero);
+
+                    effect.Projection = screen.Projection;
+                    effect.View = screen.View;
+                }
+                mesh.Draw();
+            }
+
+
         }
     }
 }
