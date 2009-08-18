@@ -206,7 +206,7 @@ namespace Skeet
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
-                    //effect.TextureEnabled = true;
+                    effect.TextureEnabled = true;
                     effect.Texture = player.drawsprite;
                     effect.EnableDefaultLighting();
                     effect.PreferPerPixelLighting = true;

@@ -34,7 +34,7 @@ Frame x3ds_SimpleFloor
      0.000000;
      1.000000;1.000000;1.000000;;
          0.000000;0.000000;0.000000;;
-         TextureFilename { "move64.png"; }
+         //TextureFilename { "flatsquare.png"; } // if this is commented out be sure to set TextureEnabled!
    }
    }
     MeshTextureCoords {
