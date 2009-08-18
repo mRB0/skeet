@@ -14,8 +14,8 @@ namespace Skeet
          * CONSTANTS
          */
         const int _sprite_animcount = 4;
-        const int _sprite_width = 60;
-        const int _sprite_height = 60;
+        const int _sprite_width = 64;
+        const int _sprite_height = 64;
         const int _sprite_animspeed = 10; // ticks required per change
 
         /*
@@ -47,7 +47,7 @@ namespace Skeet
         public float _dbg_newx = 0f, _dbg_newy = 0f, _dbg_newz = 0f;
         public float _dbg_rotx = 0f, _dbg_roty = 0f, _dbg_rotz = 0f;
         public float _dbg_scale = 1.0f;
-        public float squeezeme = 0f;
+        public float squeezeme = 40f;
 
         public Player(Game game, ScreenBits screen, String who) : base(game)
         {
@@ -55,7 +55,7 @@ namespace Skeet
             _sprite_idx = 0;
             _sprite_animwait = 0;
             _sprite_loc.X = 0f - _sprite_width;
-            _sprite_loc.Y = 0f;
+            _sprite_loc.Y = (game.GraphicsDevice.Viewport.Height / 2) - (_sprite_height/2);
 
             this._whoami = who;
         }
@@ -68,6 +68,7 @@ namespace Skeet
             {
                 _animation[i] = _screen.content.Load<Texture2D>("Sprites/" + _whoami + "/move" + i);
             }
+
             _animation_sprite = new Sprite(_screen, _animation[0]);
 
             base.LoadContent();
@@ -122,7 +123,7 @@ namespace Skeet
             // ignore above, reset back to normal values
             _dbg_newx = 0;
             _dbg_newy = 0;
-            _dbg_newz = 0.025f;
+            _dbg_newz = 0.015f;
             //_dbg_rotx = 0f;
             _dbg_roty = 0f;
             _dbg_rotz = 0f;
@@ -138,8 +139,8 @@ namespace Skeet
 
         public override void Draw(GameTime gameTime)
         {
-            _animation_sprite.texture = _animation[_sprite_idx];// drawsprite;
-            _animation_sprite.Draw(gameTime);
+            //_animation_sprite.texture = _animation[_sprite_idx];// drawsprite;
+            //_animation_sprite.Draw(gameTime);
 
             base.Draw(gameTime);
         }

@@ -48,7 +48,7 @@ namespace Skeet
             UpperRight = uppercenter - (Left * width / 2);
             LowerLeft = UpperLeft - (Up * height);
             LowerRight = UpperRight - (Up * height);
-
+            
             FillVertices();
         }
         
