@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Skeet
 {
-    public class Player : DrawableGameComponent
+    public class Player : Sprite
     {
         /*
          * CONSTANTS
@@ -37,47 +37,47 @@ namespace Skeet
         }
 
         Texture2D[] _animation;
-        Sprite _animation_sprite;
         int _sprite_idx;
         int _sprite_animwait;
         Vector2 _sprite_loc;
-        ScreenBits _screen;
         String _whoami;
+        SkeetGame _game;
 
         public float _dbg_newx = 0f, _dbg_newy = 0f, _dbg_newz = 0f;
         public float _dbg_rotx = 0f, _dbg_roty = 0f, _dbg_rotz = 0f;
         public float _dbg_scale = 1.0f;
         public float squeezeme = 40f;
 
-        public Player(Game game, ScreenBits screen, String who) : base(game)
+        public Player(SkeetGame game, String who) : base(game)
         {
-            _screen = screen;
+            this._game = game;
             _sprite_idx = 0;
             _sprite_animwait = 0;
             _sprite_loc.X = 0f - _sprite_width;
-            _sprite_loc.Y = (game.GraphicsDevice.Viewport.Height / 2) - (_sprite_height/2);
+            _sprite_loc.Y = (this._game.GraphicsDevice.Viewport.Height / 2) - (_sprite_height/2);
 
             this._whoami = who;
         }
 
         protected override void LoadContent()
         {
+            base.LoadContent();
+
             _animation = new Texture2D[_sprite_animcount];
 
             for (int i = 0; i < _sprite_animcount; i++)
             {
-                _animation[i] = _screen.content.Load<Texture2D>("Sprites/" + _whoami + "/move" + i);
+                _animation[i] = this._game.Content.Load<Texture2D>("Sprites/" + _whoami + "/move" + i);
             }
 
-            _animation_sprite = new Sprite(_screen, _animation[0]);
+            //this.texture = drawsprite;
 
-            base.LoadContent();
         }
 
         public override void Update(GameTime gameTime)
         {
             _sprite_loc.X = _sprite_loc.X + 1.5f;
-            if (_sprite_loc.X > _screen.graphics.GraphicsDevice.Viewport.Width)
+            if (_sprite_loc.X > this._game.Graphics.GraphicsDevice.Viewport.Width)
             {
                 _sprite_loc.X = 0f - _sprite_width;
             }
@@ -88,6 +88,10 @@ namespace Skeet
             {
                 _sprite_idx = (_sprite_idx + 1) % _sprite_animcount;
             }
+
+            this.texture = drawsprite;
+
+            /* XXX debug */
 
             _dbg_newx = _dbg_newx + 0.001f;
             _dbg_newy = _dbg_newy + 0.001f;
@@ -127,13 +131,13 @@ namespace Skeet
             //_dbg_rotx = 0f;
             _dbg_roty = 0f;
             _dbg_rotz = 0f;
-            _dbg_scale = 1.0f;
+            _dbg_scale = 0.01f;
 
-            _animation_sprite.test_rotation = new Vector3(_dbg_rotx, _dbg_roty, _dbg_rotz);
-            _animation_sprite.test_translation = new Vector3(_dbg_newx, _dbg_newy, _dbg_newz);
-            _animation_sprite.test_scale = _dbg_scale;
+            this.test_rotation = new Vector3(_dbg_rotx, _dbg_roty, _dbg_rotz);
+            this.test_translation = new Vector3(_dbg_newx, _dbg_newy, _dbg_newz);
+            this.test_scale = _dbg_scale;
 
-            _animation_sprite.Update(gameTime);
+            //this.Update(gameTime);
             base.Update(gameTime);
         }
 
