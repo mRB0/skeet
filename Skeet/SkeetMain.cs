@@ -13,15 +13,6 @@ using Microsoft.Xna.Framework.Storage;
 
 namespace Skeet
 {
-    public class ScreenBits
-    {
-        public GraphicsDeviceManager graphics;
-        public Matrix View, Projection;
-        public SpriteBatch spriteBatch;
-        public ContentManager content;
-
-        public int test;
-    };
 
     
     /// <summary>
@@ -29,21 +20,21 @@ namespace Skeet
     /// </summary>
     public class SkeetGame : Microsoft.Xna.Framework.Game
     {
-        ScreenBits screen = new ScreenBits();
+        public GraphicsDeviceManager Graphics;
+        public Matrix view, projection;
+        public SpriteBatch spriteBatch;
+
         SpriteFont my_font;
         Player player;
 
-        int updatecount = 0;
+        int updatecount = 0, updatecount_max = 0;
         int viewz = 0;
         Vector3 camera_position;
 
-        public Model planemodel;
-        
         public SkeetGame()
         {
-            screen.graphics = new GraphicsDeviceManager(this);
-
-            screen.content = Content;
+            Graphics = new GraphicsDeviceManager(this);
+            
             Content.RootDirectory = "Content";
         }
 
@@ -55,17 +46,17 @@ namespace Skeet
         /// </summary>
         protected override void Initialize()
         {
-            screen.graphics.MinimumVertexShaderProfile = ShaderProfile.VS_2_SW;
+            Graphics.MinimumVertexShaderProfile = ShaderProfile.VS_2_SW;
             
-            screen.graphics.ApplyChanges();
+            Graphics.ApplyChanges();
 
-            screen.View = Matrix.CreateLookAt(
+            view = Matrix.CreateLookAt(
                 new Vector3(0, -110, 54),
                 Vector3.Zero,
                 Vector3.Up);
-            screen.Projection = Matrix.CreatePerspectiveFieldOfView(
+            projection = Matrix.CreatePerspectiveFieldOfView(
                 MathHelper.ToRadians(45.0f),
-                screen.graphics.GraphicsDevice.Viewport.AspectRatio,
+                Graphics.GraphicsDevice.Viewport.AspectRatio,
                 0.001f,
                 1.0f);
                 /*Matrix.CreatePerspectiveFieldOfView(
@@ -74,7 +65,7 @@ namespace Skeet
                 1,
                 500);*/
 
-            player = new Player(this, this.screen, "Celes");
+            player = new Player(this, "Celes");
             Components.Add(player);
             
             base.Initialize();
@@ -88,13 +79,11 @@ namespace Skeet
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            screen.spriteBatch = new SpriteBatch(GraphicsDevice);
+            spriteBatch = new SpriteBatch(GraphicsDevice);
             
-            // TODO: use this.Content to load your game content here
+            // use this.Content to load your game content here
             my_font = this.Content.Load<SpriteFont>("SpriteFont1");
 
-            planemodel = this.Content.Load<Model>("Models/flatsquare");
-            
         }
 
         /// <summary>
@@ -140,7 +129,7 @@ namespace Skeet
 
             camera_position = new Vector3(0, (float)Math.Sin(MathHelper.ToRadians(viewz)) * 0.1f, 0.040f);
 
-            screen.View = Matrix.CreateLookAt(
+            view = Matrix.CreateLookAt(
                 camera_position,
                 Vector3.Zero,
                 Vector3.Up);
@@ -148,7 +137,6 @@ namespace Skeet
             base.Update(gameTime);
         }
 
-        float roll = 1.0f;
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -160,18 +148,22 @@ namespace Skeet
 
             base.Draw(gameTime);
 
-            screen.spriteBatch.Begin();
+            spriteBatch.Begin();
 
-            // TODO: Add your drawing code here
+            if (updatecount > updatecount_max)
+            {
+                updatecount_max = updatecount;
+            }
+
             List<string> strlist = new List<string>();
 
-            strlist.Add(screen.graphics.GraphicsDevice.Viewport.Width + "x" + screen.graphics.GraphicsDevice.Viewport.Height);
+            strlist.Add(Graphics.GraphicsDevice.Viewport.Width + "x" + Graphics.GraphicsDevice.Viewport.Height);
             strlist.Add("GameTime.ElapsedGameTime = " + gameTime.ElapsedGameTime);
             strlist.Add("GameTime.ElapsedRealTime = " + gameTime.ElapsedRealTime);
             strlist.Add("GameTime.TotalGameTime = " + gameTime.TotalGameTime);
             strlist.Add("GameTime.TotalRealTime = " + gameTime.TotalRealTime);
             strlist.Add("");
-            strlist.Add("updatecount = " + updatecount);
+            strlist.Add("updatecount = " + updatecount + ", worst = " + updatecount_max);
             strlist.Add("viewz = " + viewz);
             strlist.Add("cameraposition.x,y,z = " + camera_position.X + ", " + camera_position.Y + ", " + camera_position.Z);
             strlist.Add("player._dbg_newx,y,z = " + player._dbg_newx + ", " + player._dbg_newy + ", " + player._dbg_newz);
@@ -185,49 +177,16 @@ namespace Skeet
             {
                 i++;
 
-                screen.spriteBatch.DrawString(this.my_font, output, new Vector2(10, (float)my_font.LineSpacing * (float)i * 1.5f), Color.White);
+                spriteBatch.DrawString(this.my_font, output, new Vector2(10, (float)my_font.LineSpacing * (float)i * 1.5f), Color.White);
             }
 
             //screen.spriteBatch.Draw(player.drawsprite, player.drawloc, player.drawrect, Color.White);
-            screen.spriteBatch.Draw(player.drawsprite, player.drawloc, new Rectangle(0, 0, 64, 64), Color.White);
+            //spriteBatch.Draw(player.drawsprite, player.drawloc, new Rectangle(0, 0, 64, 64), Color.White);
 
-            screen.spriteBatch.End();
+            spriteBatch.End();
            
             //player.Draw(gameTime);
-            roll = roll + 1.5f;
-            if (roll > 360f)
-            {
-                roll = 0f;
-            }
             
-
-            // draw object
-            foreach (ModelMesh mesh in planemodel.Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.TextureEnabled = true;
-                    effect.Texture = player.drawsprite;
-                    effect.EnableDefaultLighting();
-                    effect.PreferPerPixelLighting = true;
-
-                    effect.World =
-                        Matrix.CreateFromYawPitchRoll(
-                            0.0f,
-                            (float)Math.Sin(MathHelper.ToRadians(roll)) * 1f,
-                            0.0f) *
-
-                        Matrix.CreateScale(0.0016f) *
-
-                        Matrix.CreateTranslation(Vector3.Zero);
-
-                    effect.Projection = screen.Projection;
-                    effect.View = screen.View;
-                }
-                mesh.Draw();
-            }
-
-
         }
     }
 }

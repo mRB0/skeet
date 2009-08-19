@@ -14,13 +14,14 @@ using Microsoft.Xna.Framework.Storage;
 
 namespace Skeet
 {
-    class Sprite
+    public class Sprite : DrawableGameComponent
     {
         public Vector3 test_translation = Vector3.Zero;
         public Vector3 test_rotation = Vector3.Zero;
         public float test_scale = 1.0f;
 
-        Quad _quad;
+        Model _quad;
+
         public Texture2D texture
         {
             get
@@ -30,52 +31,55 @@ namespace Skeet
             set
             {
                 _texture = value;
-                _quadEffect.Texture = _texture;
+
+                foreach (ModelMesh mesh in _quad.Meshes)
+                {
+                    foreach (BasicEffect effect in mesh.Effects)
+                    {
+                        effect.TextureEnabled = true;
+                        effect.Texture = _texture;
+                    }
+                }
+               
             }
         }
 
         Texture2D _texture;
-        
-        BasicEffect _quadEffect;
-        ScreenBits _screen;
-        VertexDeclaration _quadVertexDecl;
+        SkeetGame _game;
 
-        public Sprite(ScreenBits screen, Texture2D texture)
+        public Sprite(SkeetGame game) : base(game)
         {
-            _screen = screen;
-            _quad = new Quad(new Vector3(0, 0, 0), Vector3.Backward, Vector3.Up, (float)texture.Width / 1000f, (float)texture.Height / 1000f);
-            //_quad = new Quad(new Vector3(0, 0, 0), Vector3.Backward, Vector3.Up, (float)texture.Width / 1000f, (float)texture.Width / 1000f);
-
-            this._texture = texture;
-            
-            _quadEffect = new BasicEffect(screen.graphics.GraphicsDevice, null);
-            _quadEffect.EnableDefaultLighting();
-
-            /*
-            _quadEffect.World = Matrix.Identity;
-            _quadEffect.View = screen.View;
-            _quadEffect.Projection = screen.Projection;
-             */
-            _quadEffect.TextureEnabled = true;
-            _quadEffect.Texture = this._texture;
-            
-            _quadVertexDecl = new VertexDeclaration(
-                _screen.graphics.GraphicsDevice,
-                VertexPositionNormalTexture.VertexElements
-                );
-            
+            this._game = game;
         }
 
-        public void Update(GameTime gameTime)
+        protected override void LoadContent()
         {
+            _quad = this._game.Content.Load<Model>("Models/flatsquare");
 
+            foreach (ModelMesh mesh in _quad.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.PreferPerPixelLighting = true;
+                }
+            }
         }
 
-        public void Draw(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
-            _screen.graphics.GraphicsDevice.VertexDeclaration = _quadVertexDecl;
+            base.Update(gameTime);
+        }
 
-            _quadEffect.World = Matrix.CreateFromYawPitchRoll(
+        public override void Draw(GameTime gameTime)
+        {
+
+            // draw object
+            foreach (ModelMesh mesh in _quad.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.World = Matrix.CreateFromYawPitchRoll(
                         test_rotation.Y,
                         test_rotation.X,
                         test_rotation.Z) *
@@ -84,24 +88,15 @@ namespace Skeet
 
                         Matrix.CreateTranslation(test_translation);
 
-            _quadEffect.View = _screen.View;
-            _quadEffect.Projection = _screen.Projection;
+                        Matrix.CreateTranslation(Vector3.Zero);
 
-
-            _quadEffect.Begin();
-            foreach (EffectPass pass in _quadEffect.CurrentTechnique.Passes)
-            {
-                pass.Begin();
-
-                _screen.graphics.GraphicsDevice.DrawUserIndexedPrimitives
-                    <VertexPositionNormalTexture>(
-                    PrimitiveType.TriangleList,
-                    _quad.Vertices, 0, 4,
-                    _quad.Indexes, 0, 2);
-
-                pass.End();
+                    effect.Projection = _game.projection;
+                    effect.View = _game.view;
+                }
+                mesh.Draw();
             }
-            _quadEffect.End();
+            base.Draw(gameTime);
+
         }
     }
 }
