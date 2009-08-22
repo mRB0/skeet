@@ -28,8 +28,7 @@ namespace Skeet
         Player player;
 
         int updatecount = 0, updatecount_max = 0;
-        int viewz = 0;
-        Vector3 camera_position;
+        public Vector3 camera_position = new Vector3(0, 0, 0.10f);
 
         public SkeetGame()
         {
@@ -110,24 +109,33 @@ namespace Skeet
             {
                 this.Exit();
             }
-            //player.Update(gameTime);
 
             /*
              * Update logic.
              */
             updatecount++;
 
-            //viewz = 0;
-            
-
-            viewz = viewz + 1;
-            viewz = 0;
-            if (viewz > 360)
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
             {
-                viewz = 0;
+                camera_position.Y = camera_position.Y + 0.01f;
             }
-
-            camera_position = new Vector3(0, (float)Math.Sin(MathHelper.ToRadians(viewz)) * 0.1f, 0.040f);
+            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+            {
+                camera_position.Y = camera_position.Y - 0.01f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+            {
+                camera_position.X = camera_position.X - 0.01f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            {
+                camera_position.X = camera_position.X + 0.01f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Space))
+            {
+                camera_position.X = 0;
+                camera_position.Y = 0;
+            }
 
             view = Matrix.CreateLookAt(
                 camera_position,
@@ -164,12 +172,9 @@ namespace Skeet
             strlist.Add("GameTime.TotalRealTime = " + gameTime.TotalRealTime);
             strlist.Add("");
             strlist.Add("updatecount = " + updatecount + ", worst = " + updatecount_max);
-            strlist.Add("viewz = " + viewz);
             strlist.Add("cameraposition.x,y,z = " + camera_position.X + ", " + camera_position.Y + ", " + camera_position.Z);
-            strlist.Add("player._dbg_newx,y,z = " + player._dbg_newx + ", " + player._dbg_newy + ", " + player._dbg_newz);
-            strlist.Add("player._dbg_rotx,y,z = " + player._dbg_rotx + ", " + player._dbg_roty + ", " + player._dbg_rotz);
-            strlist.Add("player._dbg_scale = " + player._dbg_scale);
-
+            strlist.Add("rotation.Y = " + MathHelper.ToDegrees(player.rotation.Y));
+            
             updatecount = 0;
             int i = 0;
 

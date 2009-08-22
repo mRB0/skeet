@@ -16,11 +16,9 @@ namespace Skeet
 {
     public class Sprite : DrawableGameComponent
     {
-        public Vector3 test_translation = Vector3.Zero;
-        public Vector3 test_rotation = Vector3.Zero;
-        public float test_scale = 1.0f;
-
+        
         Model _quad;
+        private const float _quadside = 1.0f; // length of any side of quad (which is square)
 
         public Texture2D texture
         {
@@ -66,29 +64,35 @@ namespace Skeet
             }
         }
 
+        
         public override void Update(GameTime gameTime)
         {
+            Vector3 anglevector = _game.camera_position - this.pos;
+            rotation.X = 0;
+            rotation.Z = 0;
+            rotation.Y = (float)(-Math.Atan2(anglevector.Z, anglevector.X) + Math.PI / 2);
+
             base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
         {
+            // set rotation to face the camera
 
             // draw object
             foreach (ModelMesh mesh in _quad.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
-                    effect.World = Matrix.CreateFromYawPitchRoll(
-                        test_rotation.Y,
-                        test_rotation.X,
-                        test_rotation.Z) *
+                    effect.World = 
+                        Matrix.CreateFromYawPitchRoll(
+                        rotation.Y,
+                        rotation.X,
+                        rotation.Z) *
 
-                        Matrix.CreateScale(test_scale) *
+                        Matrix.CreateScale(_scale) *
 
-                        Matrix.CreateTranslation(test_translation);
-
-                        Matrix.CreateTranslation(Vector3.Zero);
+                        Matrix.CreateTranslation(pos);
 
                     effect.Projection = _game.projection;
                     effect.View = _game.view;
@@ -98,5 +102,39 @@ namespace Skeet
             base.Draw(gameTime);
 
         }
+
+        /*
+         * spritey bits
+         */
+
+        // xxx for now, the texture must be square (like the quad)
+        protected float texture_width
+        {
+            get
+            {
+                return _texture_width;
+            }
+            set
+            {
+                _texture_width = value;
+                _scale = _texture_width / _quadside;
+            }
+        }
+        protected float _texture_width = 0.064f;
+        protected float _texture_height = 0.064f;
+        
+        protected float _scale = 0.064f;
+
+        // width/height of the actual sprite (will likely be smaller than _texture_*)
+        protected float width = 0.032f;
+        protected float height = 0.064f;
+        // center of sprite, as an offset from center of quad.
+        // eg. base of sprite should be at 0 - offs.Y - (height/2f)
+        // XXX UNIMPLEMENTED
+        protected Vector2 ctr = new Vector2(0, 0);
+
+        public Vector3 rotation = Vector3.Zero;
+        protected Vector3 pos = Vector3.Zero;
+
     }
 }

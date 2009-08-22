@@ -43,11 +43,7 @@ namespace Skeet
         String _whoami;
         SkeetGame _game;
 
-        public float _dbg_newx = 0f, _dbg_newy = 0f, _dbg_newz = 0f;
-        public float _dbg_rotx = 0f, _dbg_roty = 0f, _dbg_rotz = 0f;
-        public float _dbg_scale = 1.0f;
-        public float squeezeme = 40f;
-
+        
         public Player(SkeetGame game, String who) : base(game)
         {
             this._game = game;
@@ -91,53 +87,8 @@ namespace Skeet
 
             this.texture = drawsprite;
 
-            /* XXX debug */
+            //this.pos = this.pos + new Vector3(0.001f, 0f, 0f);
 
-            _dbg_newx = _dbg_newx + 0.001f;
-            _dbg_newy = _dbg_newy + 0.001f;
-            if (_dbg_newx > 0.016f)
-            {
-                _dbg_newx = -0.016f;
-            }
-            if (_dbg_newy > 0.016f)
-            {
-                _dbg_newy = -0.016f;
-            }
-
-            _dbg_newz = _dbg_newz - 0.00125f;
-            
-            if (_dbg_newz < -0.2f)
-            {
-                _dbg_newz = 0.04f;
-            }
-            
-            _dbg_scale = _dbg_scale + 0.025f;
-            if (_dbg_scale > 3.0f)
-            {
-                _dbg_scale = 0.25f;
-            }
-
-            squeezeme = squeezeme + 1.5f;
-            if (squeezeme > 360f)
-            {
-                squeezeme = 0f;
-            }
-            _dbg_rotx = (float)Math.Sin(MathHelper.ToRadians(squeezeme)) * 1f;
-
-            // ignore above, reset back to normal values
-            _dbg_newx = 0;
-            _dbg_newy = 0;
-            _dbg_newz = 0.015f;
-            //_dbg_rotx = 0f;
-            _dbg_roty = 0f;
-            _dbg_rotz = 0f;
-            _dbg_scale = 0.01f;
-
-            this.test_rotation = new Vector3(_dbg_rotx, _dbg_roty, _dbg_rotz);
-            this.test_translation = new Vector3(_dbg_newx, _dbg_newy, _dbg_newz);
-            this.test_scale = _dbg_scale;
-
-            //this.Update(gameTime);
             base.Update(gameTime);
         }
 
