@@ -56,6 +56,7 @@ namespace Skeet
             }
 
             this.texture_width = 0.0001f * (float)_sprite_width;
+            this.ctr = new Vector2(0f, -0.0004f);
             //this.texture = drawsprite;
 
         }
