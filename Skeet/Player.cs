@@ -33,13 +33,11 @@ namespace Skeet
         int _sprite_idx;
         int _sprite_animwait;
         String _whoami;
-        SkeetGame _game;
-
+        
         public Vector3 move = Vector3.Zero;
         
         public Player(SkeetGame game, String who) : base(game)
         {
-            this._game = game;
             _sprite_idx = 0;
             _sprite_animwait = 0;
             

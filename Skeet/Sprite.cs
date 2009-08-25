@@ -43,7 +43,7 @@ namespace Skeet
         }
 
         Texture2D _texture;
-        SkeetGame _game;
+        protected SkeetGame _game;
 
         public Sprite(SkeetGame game) : base(game)
         {
@@ -53,7 +53,7 @@ namespace Skeet
         protected override void LoadContent()
         {
             _quad = this._game.Content.Load<Model>("Models/flatsquare");
-
+            /*
             foreach (ModelMesh mesh in _quad.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
@@ -62,6 +62,7 @@ namespace Skeet
                     effect.PreferPerPixelLighting = true;
                 }
             }
+             */
         }
 
         
@@ -99,6 +100,8 @@ namespace Skeet
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
+                    effect.Begin();
+
                     effect.World = 
                         Matrix.CreateFromYawPitchRoll(
                         rotation.Y,
@@ -111,6 +114,8 @@ namespace Skeet
 
                     effect.Projection = _game.projection;
                     effect.View = _game.view;
+
+                    effect.End();
                 }
                 mesh.Draw();
             }
