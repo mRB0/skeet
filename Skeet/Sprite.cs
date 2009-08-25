@@ -67,10 +67,25 @@ namespace Skeet
         
         public override void Update(GameTime gameTime)
         {
-            Vector3 anglevector = _game.camera_position - this.pos;
-            rotation.X = 0;
-            rotation.Z = 0;
-            rotation.Y = (float)(-Math.Atan2(anglevector.Z, anglevector.X) + Math.PI / 2);
+            // normalize rotation values
+
+            while (this.rotation.X < 0f)
+            {
+                this.rotation.X += (2.0f * (float)Math.PI);
+            }
+            while (this.rotation.Y < 0f)
+            {
+                this.rotation.Y += (2.0f * (float)Math.PI);
+            }
+            while (this.rotation.Z < 0f)
+            {
+                this.rotation.Z += (2.0f * (float)Math.PI);
+            }
+
+            this.rotation.X = this.rotation.X % (2.0f * (float)Math.PI);
+            this.rotation.Y = this.rotation.Y % (2.0f * (float)Math.PI);
+            this.rotation.Z = this.rotation.Z % (2.0f * (float)Math.PI);
+
 
             base.Update(gameTime);
         }
@@ -134,7 +149,7 @@ namespace Skeet
         protected Vector2 ctr = new Vector2(0, 0);
 
         public Vector3 rotation = Vector3.Zero;
-        protected Vector3 pos = Vector3.Zero;
+        public Vector3 pos = Vector3.Zero;
 
     }
 }
