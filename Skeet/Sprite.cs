@@ -102,13 +102,17 @@ namespace Skeet
                 {
                     effect.Begin();
 
-                    effect.World = 
+                    effect.World =
+                        Matrix.CreateScale(_scale) *
+
+                        Matrix.CreateTranslation(new Vector3(-this.ctr.X, -this.ctr.Y, 0)) *
+                        
                         Matrix.CreateFromYawPitchRoll(
                         rotation.Y,
                         rotation.X,
                         rotation.Z) *
 
-                        Matrix.CreateScale(_scale) *
+                        //Matrix.CreateTranslation(new Vector3(this.ctr.X, this.ctr.Y, 0)) *
 
                         Matrix.CreateTranslation(pos);
 
@@ -150,7 +154,6 @@ namespace Skeet
         protected float height = 0.064f;
         // center of sprite, as an offset from center of quad.
         // eg. base of sprite should be at 0 - offs.Y - (height/2f)
-        // XXX UNIMPLEMENTED
         protected Vector2 ctr = new Vector2(0, 0);
 
         public Vector3 rotation = Vector3.Zero;
