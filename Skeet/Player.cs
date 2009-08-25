@@ -28,30 +28,21 @@ namespace Skeet
                 return _animation[_sprite_idx];
             }
         }
-        public Vector2 drawloc
-        {
-            get
-            {
-                return _sprite_loc;
-            }
-        }
-
+        
         Texture2D[] _animation;
         int _sprite_idx;
         int _sprite_animwait;
-        Vector2 _sprite_loc;
         String _whoami;
         SkeetGame _game;
 
+        public Vector3 move = Vector3.Zero;
         
         public Player(SkeetGame game, String who) : base(game)
         {
             this._game = game;
             _sprite_idx = 0;
             _sprite_animwait = 0;
-            _sprite_loc.X = 0f - _sprite_width;
-            _sprite_loc.Y = (this._game.GraphicsDevice.Viewport.Height / 2) - (_sprite_height/2);
-
+            
             this._whoami = who;
         }
 
@@ -66,18 +57,13 @@ namespace Skeet
                 _animation[i] = this._game.Content.Load<Texture2D>("Sprites/" + _whoami + "/move" + i);
             }
 
+            this.texture_width = 0.0001f * (float)_sprite_width;
             //this.texture = drawsprite;
 
         }
 
         public override void Update(GameTime gameTime)
         {
-            _sprite_loc.X = _sprite_loc.X + 1.5f;
-            if (_sprite_loc.X > this._game.Graphics.GraphicsDevice.Viewport.Width)
-            {
-                _sprite_loc.X = 0f - _sprite_width;
-            }
-
             _sprite_animwait = (_sprite_animwait + 1) % _sprite_animspeed;
 
             if (0 == _sprite_animwait)
@@ -87,8 +73,10 @@ namespace Skeet
 
             this.texture = drawsprite;
 
-            //this.pos = this.pos + new Vector3(0.001f, 0f, 0f);
-
+            this.pos.Y = this.pos.Y + this.move.Y;
+            this.pos.X = this.pos.X + (this.move.X * (float)Math.Cos(this.rotation.Y));
+            this.pos.Z = this.pos.Z + -(this.move.X * (float)Math.Sin(this.rotation.Y));
+            
             base.Update(gameTime);
         }
 

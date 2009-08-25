@@ -28,7 +28,10 @@ namespace Skeet
         Player player;
 
         int updatecount = 0, updatecount_max = 0;
-        public Vector3 camera_position = new Vector3(0, 0, 0.10f);
+        public Vector3 camera_position = new Vector3(0, 0, 0.0225f);
+        float camera_distance = 0.04f;
+
+        Model[] cubes;
 
         public SkeetGame()
         {
@@ -66,7 +69,7 @@ namespace Skeet
 
             player = new Player(this, "Celes");
             Components.Add(player);
-            
+
             base.Initialize();
 
         }
@@ -83,6 +86,12 @@ namespace Skeet
             // use this.Content to load your game content here
             my_font = this.Content.Load<SpriteFont>("SpriteFont1");
 
+            cubes = new Model[8];
+
+            for (int i = 0; i < 8; i++)
+            {
+                cubes[i] = this.Content.Load<Model>("Models/cubes");
+            }
         }
 
         /// <summary>
@@ -115,34 +124,67 @@ namespace Skeet
              */
             updatecount++;
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+            if (Keyboard.GetState().IsKeyDown(Keys.Home))
             {
-                camera_position.Y = camera_position.Y + 0.01f;
+                this.player.rotation.Y = this.player.rotation.Y + ((float)Math.PI / 90f);
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+            if (Keyboard.GetState().IsKeyDown(Keys.End))
             {
-                camera_position.Y = camera_position.Y - 0.01f;
+                this.player.rotation.Y = this.player.rotation.Y - ((float)Math.PI / 90f);
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+            if (Keyboard.GetState().IsKeyDown(Keys.PageDown))
             {
-                camera_position.X = camera_position.X - 0.01f;
+                camera_distance = camera_distance + 0.0025f;
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            if (Keyboard.GetState().IsKeyDown(Keys.PageUp))
             {
-                camera_position.X = camera_position.X + 0.01f;
+                camera_distance = camera_distance - 0.0025f;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
             {
-                camera_position.X = 0;
-                camera_position.Y = 0;
+                camera_distance = 0.04f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Z))
+            {
+                updatecount_max = 0;
             }
 
+            player.move = new Vector3(0, 0, 0);
+            // movement
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+            {
+                player.move.Y += 0.0002f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+            {
+                player.move.Y -= 0.0002f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+            {
+                player.move.X -= 0.0002f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            {
+                player.move.X += 0.0002f;
+            }
+
+
+            Vector3 anglevector = player.pos - camera_position;
+            
+            camera_position.X = player.pos.X + (camera_distance * (float)Math.Sin(player.rotation.Y));
+            camera_position.Z = player.pos.Z + (camera_distance * (float)Math.Cos(player.rotation.Y));
+            camera_position.Y = this.player.pos.Y;
+            
+            
+            
+            base.Update(gameTime);
+
+            //camera_position.X = this.player.pos.X;
             view = Matrix.CreateLookAt(
                 camera_position,
-                Vector3.Zero,
+                player.pos,
                 Vector3.Up);
 
-            base.Update(gameTime);
         }
 
         /// <summary>
@@ -151,8 +193,72 @@ namespace Skeet
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            
-            GraphicsDevice.Clear(new Color(0.08f, 0.08f, 0.08f));
+            int i;
+
+            //GraphicsDevice.Clear(new Color(0.08f, 0.08f, 0.08f));
+            //GraphicsDevice.Clear(Color.DarkSlateBlue);
+            GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, new Color(0.08f, 0.08f, 0.28f), 1.0f, 0);
+
+            GraphicsDevice.RenderState.DepthBufferEnable = true;
+            GraphicsDevice.RenderState.DepthBufferWriteEnable = true;
+
+            for (i = 0; i < 8; i++ )
+            {
+                foreach (ModelMesh mesh in cubes[i].Meshes)
+                {
+                    foreach (BasicEffect effect in mesh.Effects)
+                    {
+                        effect.EnableDefaultLighting();
+
+                        if (i == 0)
+                        {
+                            effect.DiffuseColor = new Vector3(0f, 0.7f, 0.5f);
+                        }
+                        else
+                        {
+                            effect.DiffuseColor = new Vector3(0.9f, 0.2f, 0.2f);
+                        }
+
+                        float x, y, z;
+                        if (i % 2 == 0)
+                        {
+                            x = 0.0064f;
+                        }
+                        else
+                        {
+                            x = -0.0064f;
+                        }
+                        if (i % 4 < 2)
+                        {
+                            y = 0.0064f;
+                        }
+                        else
+                        {
+                            y = -0.0064f;
+                        }
+                        if (i < 4)
+                        {
+                            z = 0.0064f;
+                        }
+                        else
+                        {
+                            z = -0.0064f;
+                        }
+
+                        effect.World =
+                            Matrix.CreateFromYawPitchRoll(
+                            0, 0, 0) *
+
+                            Matrix.CreateScale(0.1f) *
+
+                            Matrix.CreateTranslation(new Vector3(x, y, z));
+
+                        effect.Projection = projection;
+                        effect.View = view;
+                    }
+                    mesh.Draw();
+                }
+            }
 
             base.Draw(gameTime);
 
@@ -165,18 +271,12 @@ namespace Skeet
 
             List<string> strlist = new List<string>();
 
-            strlist.Add(Graphics.GraphicsDevice.Viewport.Width + "x" + Graphics.GraphicsDevice.Viewport.Height);
-            strlist.Add("GameTime.ElapsedGameTime = " + gameTime.ElapsedGameTime);
-            strlist.Add("GameTime.ElapsedRealTime = " + gameTime.ElapsedRealTime);
-            strlist.Add("GameTime.TotalGameTime = " + gameTime.TotalGameTime);
-            strlist.Add("GameTime.TotalRealTime = " + gameTime.TotalRealTime);
-            strlist.Add("");
-            strlist.Add("updatecount = " + updatecount + ", worst = " + updatecount_max);
-            strlist.Add("cameraposition.x,y,z = " + camera_position.X + ", " + camera_position.Y + ", " + camera_position.Z);
-            strlist.Add("rotation.Y = " + MathHelper.ToDegrees(player.rotation.Y));
+            strlist.Add(Graphics.GraphicsDevice.Viewport.Width + "x" + Graphics.GraphicsDevice.Viewport.Height + "; updatecount = " + updatecount + ", worst = " + updatecount_max);
+            strlist.Add("cameradistancce = " + camera_distance + "; cameraposition.x,y,z = " + camera_position.X + ", " + camera_position.Y + ", " + camera_position.Z);
+            strlist.Add("player.rotation = " + player.rotation);
             
             updatecount = 0;
-            int i = 0;
+            i = 0;
 
             foreach (String output in strlist)
             {
@@ -185,12 +285,8 @@ namespace Skeet
                 spriteBatch.DrawString(this.my_font, output, new Vector2(10, (float)my_font.LineSpacing * (float)i * 1.5f), Color.White);
             }
 
-            //screen.spriteBatch.Draw(player.drawsprite, player.drawloc, player.drawrect, Color.White);
-            //spriteBatch.Draw(player.drawsprite, player.drawloc, new Rectangle(0, 0, 64, 64), Color.White);
-
+            
             spriteBatch.End();
-           
-            //player.Draw(gameTime);
             
         }
     }
