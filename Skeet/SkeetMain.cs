@@ -48,9 +48,10 @@ namespace Skeet
         /// </summary>
         protected override void Initialize()
         {
-            Graphics.MinimumVertexShaderProfile = ShaderProfile.VS_2_SW;
-            
-            Graphics.ApplyChanges();
+            //Graphics.MinimumVertexShaderProfile = ShaderProfile.VS_2_SW;
+
+
+            //Graphics.ApplyChanges();
 
             view = Matrix.CreateLookAt(
                 new Vector3(0, -110, 54),
@@ -139,10 +140,16 @@ namespace Skeet
             if (Keyboard.GetState().IsKeyDown(Keys.PageUp))
             {
                 camera_distance = camera_distance - 0.0025f;
+                if (camera_distance < 0.0025f)
+                {
+                    camera_distance = 0.0025f;
+                }
             }
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
             {
                 camera_distance = 0.04f;
+                this.player.pos = Vector3.Zero;
+                this.player.rotation = Vector3.Zero;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.Z))
             {
@@ -169,6 +176,8 @@ namespace Skeet
             }
 
 
+            base.Update(gameTime);
+
             Vector3 anglevector = player.pos - camera_position;
             
             camera_position.X = player.pos.X + (camera_distance * (float)Math.Sin(player.rotation.Y));
@@ -176,8 +185,6 @@ namespace Skeet
             camera_position.Y = this.player.pos.Y;
             
             
-            
-            base.Update(gameTime);
 
             //camera_position.X = this.player.pos.X;
             view = Matrix.CreateLookAt(
@@ -198,7 +205,7 @@ namespace Skeet
             //GraphicsDevice.Clear(new Color(0.08f, 0.08f, 0.08f));
             //GraphicsDevice.Clear(Color.DarkSlateBlue);
             GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, new Color(0.08f, 0.08f, 0.28f), 1.0f, 0);
-
+            
             GraphicsDevice.RenderState.DepthBufferEnable = true;
             GraphicsDevice.RenderState.DepthBufferWriteEnable = true;
 
@@ -208,6 +215,8 @@ namespace Skeet
                 {
                     foreach (BasicEffect effect in mesh.Effects)
                     {
+                        effect.Begin();
+
                         effect.EnableDefaultLighting();
 
                         if (i == 0)
@@ -255,8 +264,10 @@ namespace Skeet
 
                         effect.Projection = projection;
                         effect.View = view;
+                        effect.End();
                     }
                     mesh.Draw();
+
                 }
             }
 
@@ -272,8 +283,8 @@ namespace Skeet
             List<string> strlist = new List<string>();
 
             strlist.Add(Graphics.GraphicsDevice.Viewport.Width + "x" + Graphics.GraphicsDevice.Viewport.Height + "; updatecount = " + updatecount + ", worst = " + updatecount_max);
-            strlist.Add("cameradistancce = " + camera_distance + "; cameraposition.x,y,z = " + camera_position.X + ", " + camera_position.Y + ", " + camera_position.Z);
-            strlist.Add("player.rotation = " + player.rotation);
+            strlist.Add("camera distance = " + camera_distance + "; camera position = " + camera_position);
+            strlist.Add("player.rotation = " + player.rotation + "; player.position = " + player.pos);
             
             updatecount = 0;
             i = 0;
