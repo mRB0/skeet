@@ -174,6 +174,14 @@ namespace Skeet
             {
                 player.move.X += 0.0002f;
             }
+            if (Keyboard.GetState().IsKeyDown(Keys.OemComma))
+            {
+                player.move.Z -= 0.0002f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.OemPeriod))
+            {
+                player.move.Z += 0.0002f;
+            }
 
 
             base.Update(gameTime);

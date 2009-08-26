@@ -72,10 +72,12 @@ namespace Skeet
 
             this.texture = drawsprite;
 
-            this.pos.Y = this.pos.Y + this.move.Y;
-            this.pos.X = this.pos.X + (this.move.X * (float)Math.Cos(this.rotation.Y));
-            this.pos.Z = this.pos.Z + -(this.move.X * (float)Math.Sin(this.rotation.Y));
-            
+            Vector3 movedir = moveFwdToDir(this.move);
+
+            this.pos.X += movedir.X;
+            this.pos.Y += movedir.Y;
+            this.pos.Z += movedir.Z;
+
             base.Update(gameTime);
         }
 

@@ -127,6 +127,30 @@ namespace Skeet
 
         }
 
+        /* 
+         * convert a 3D move vector, relative to the object's position in a
+         * 2D plane (eg. according to its rotation), into a 3D vector that
+         * represents movement in that direction
+         */
+        public Vector3 moveFwdToDir(Vector3 direction, Vector3 rotation)
+        {
+            Vector3 adjusted_direction = new Vector3();
+            
+            Matrix m = Matrix.CreateTranslation(direction);
+            m = m * Matrix.CreateFromYawPitchRoll(rotation.Y, rotation.X, rotation.Z);
+
+            adjusted_direction = m.Translation;
+
+            return adjusted_direction;
+        }
+        /*
+         * same as above but using object's known rotation
+         */
+        public Vector3 moveFwdToDir(Vector3 direction)
+        {
+            return moveFwdToDir(direction, this.rotation);
+        }
+
         /*
          * spritey bits
          */
