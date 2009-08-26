@@ -88,13 +88,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\terrain.fbx">
-      <Name>terrain</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Models\cubes.x">
       <Name>cubes</Name>
       <Importer>XImporter</Importer>
