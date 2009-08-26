@@ -135,9 +135,29 @@ namespace Skeet
             }
             if (Keyboard.GetState().IsKeyDown(Keys.PageDown))
             {
-                camera_distance = camera_distance + 0.0025f;
+                this.player.rotation.X = this.player.rotation.X + ((float)Math.PI / 90f);
+                if (this.player.rotation.X > (float)Math.PI / 2.0f)
+                {
+                    this.player.rotation.X = (float)Math.PI / 2.0f;
+                }
             }
             if (Keyboard.GetState().IsKeyDown(Keys.PageUp))
+            {
+                this.player.rotation.X = this.player.rotation.X - ((float)Math.PI / 90f);
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Insert))
+            {
+                this.player.rotation.Z = this.player.rotation.Z + ((float)Math.PI / 90f);
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Delete))
+            {
+                this.player.rotation.Z = this.player.rotation.Z - ((float)Math.PI / 90f);
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+                camera_distance = camera_distance + 0.0025f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
                 camera_distance = camera_distance - 0.0025f;
                 if (camera_distance < 0.0025f)
@@ -186,15 +206,12 @@ namespace Skeet
 
             base.Update(gameTime);
 
-            Vector3 anglevector = player.pos - camera_position;
-            
-            camera_position.X = player.pos.X + (camera_distance * (float)Math.Sin(player.rotation.Y));
-            camera_position.Z = player.pos.Z + (camera_distance * (float)Math.Cos(player.rotation.Y));
-            camera_position.Y = this.player.pos.Y;
-            
-            
+            Matrix mtx_camera_pos = Matrix.CreateTranslation(0f, 0f, camera_distance) *
+                Matrix.CreateFromYawPitchRoll(player.rotation.Y, player.rotation.X, player.rotation.Z) *
+                Matrix.CreateTranslation(player.pos);
 
-            //camera_position.X = this.player.pos.X;
+            camera_position = mtx_camera_pos.Translation;
+
             view = Matrix.CreateLookAt(
                 camera_position,
                 player.pos,
