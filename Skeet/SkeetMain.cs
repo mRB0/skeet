@@ -30,6 +30,7 @@ namespace Skeet
         int updatecount = 0, updatecount_max = 0;
         public Vector3 camera_position = new Vector3(0, 0, 0.0225f);
         float camera_distance = 0.04f;
+        KeyboardState _kbd_last_state;
 
         Model[] cubes;
 
@@ -73,6 +74,7 @@ namespace Skeet
 
             base.Initialize();
 
+            _kbd_last_state = Keyboard.GetState();
         }
 
         /// <summary>
@@ -124,7 +126,7 @@ namespace Skeet
              * Update logic.
              */
             updatecount++;
-
+            
             if (Keyboard.GetState().IsKeyDown(Keys.Home))
             {
                 this.player.rotation.Y = this.player.rotation.Y + ((float)Math.PI / 90f);
@@ -136,15 +138,12 @@ namespace Skeet
             if (Keyboard.GetState().IsKeyDown(Keys.PageDown))
             {
                 this.player.rotation.X = this.player.rotation.X + ((float)Math.PI / 90f);
-                if (this.player.rotation.X > (float)Math.PI / 2.0f)
-                {
-                    this.player.rotation.X = (float)Math.PI / 2.0f;
-                }
             }
             if (Keyboard.GetState().IsKeyDown(Keys.PageUp))
             {
                 this.player.rotation.X = this.player.rotation.X - ((float)Math.PI / 90f);
             }
+
             if (Keyboard.GetState().IsKeyDown(Keys.Insert))
             {
                 this.player.rotation.Z = this.player.rotation.Z + ((float)Math.PI / 90f);
@@ -153,6 +152,13 @@ namespace Skeet
             {
                 this.player.rotation.Z = this.player.rotation.Z - ((float)Math.PI / 90f);
             }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.A) && !_kbd_last_state.IsKeyDown(Keys.A))
+            {
+                player._falling = !player._falling;
+            }
+
+            
             if (Keyboard.GetState().IsKeyDown(Keys.S))
             {
                 camera_distance = camera_distance + 0.0025f;
@@ -206,8 +212,10 @@ namespace Skeet
 
             base.Update(gameTime);
 
+            // ignore rotation around the X axis for deciding camera positioning.
+            // (rotation around the z axis basically gets ignored too, implicitly)
             Matrix mtx_camera_pos = Matrix.CreateTranslation(0f, 0f, camera_distance) *
-                Matrix.CreateFromYawPitchRoll(player.rotation.Y, player.rotation.X, player.rotation.Z) *
+                Matrix.CreateFromYawPitchRoll(player.rotation.Y, 0.0f, player.rotation.Z) *
                 Matrix.CreateTranslation(player.pos);
 
             camera_position = mtx_camera_pos.Translation;
@@ -217,6 +225,9 @@ namespace Skeet
                 player.pos,
                 Vector3.Up);
 
+
+            _kbd_last_state = Keyboard.GetState();
+            
         }
 
         /// <summary>
