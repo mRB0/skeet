@@ -20,6 +20,8 @@ namespace Skeet
         Model _quad;
         private const float _quadside = 1.0f; // length of any side of quad (which is square)
 
+        public BoundingSphere bounds;
+
         public Texture2D texture
         {
             get
@@ -149,6 +151,13 @@ namespace Skeet
         public Vector3 moveFwdToDir(Vector3 direction)
         {
             return moveFwdToDir(direction, this.rotation);
+        }
+
+        public BoundingSphere getBounds()
+        {
+            this.bounds.Center = this.pos;
+
+            return this.bounds;
         }
 
         /*
